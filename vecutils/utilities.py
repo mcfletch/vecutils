@@ -1,33 +1,14 @@
 '''Simple utility functions that should really be in a C module'''
 from .arrays import (
-    cos, sin, array, asarray, zeros, 
+    asarray, zeros, 
     dot, reshape, sometrue, compress, 
     allclose, 
 )
 from . import vectorutilities
 
-def rotMatrix( rota ):
-    """Given rotation as x,y,z,a (a in radians), return rotation matrix
-
-    Returns a 4x4 rotation matrix for the given rotation,
-    the matrix is a Numeric Python array.
-    
-    x,y,z should be a unit vector.
-    """
-    (x,y,z,a) = rota
-    c = cos( a )
-    s = sin( a )
-    t = 1-c
-    R = array( [
-        [ t*x*x+c, t*x*y+s*z, t*x*z-s*y, 0],
-        [ t*x*y-s*z, t*y*y+c, t*y*z+s*x, 0],
-        [ t*x*z+s*y, t*y*z-s*x, t*z*z+c, 0],
-        [ 0,        0,        0,         1]
-    ] )
-    return R
 def crossProduct( first, second ):
     """Given 2 4-item vectors, return the cross product as a 4-item vector"""
-    x,y,z = vectorutilities.crossProduct( first, second )[0]
+    x,y,z = vectorutilities.crossProduct( first[:3], second[:3] )[0]
     return [x,y,z,0]
 def magnitude( vector ):
     """Given a 3 or 4-item vector, return the vector's magnitude"""

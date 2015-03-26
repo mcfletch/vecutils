@@ -7,7 +7,7 @@ Note: this is an entirely separate implementation from the PyOpenGL
     commonly needed for manipulating rotations.
 """
 #from OpenGLContext.arrays import *
-from .arrays import (array, sin, cos, asarray, sqrt, sum, dot, acos)
+from .arrays import (array, sin, cos, asarray, sqrt, sum, dot, arccos)
 from . import utilities
 
 def fromXYZR( x,y,z, r ):
@@ -82,7 +82,7 @@ class Quaternion(object):
         """
         w,x,y,z = self.internal
         try:
-            aw = acos(w)
+            aw = arccos(w)
         except ValueError:
             # catches errors where w == 1.00000000002
             aw = 0
@@ -137,7 +137,7 @@ class Quaternion(object):
         #first get the dot-product of the two vectors
         cosValue = sum(self.internal + other.internal)
         # now get the positive angle in range 0-pi
-        return acos( cosValue )
+        return arccos( cosValue )
     def slerp( self, other, fraction = 0, minimalStep= 0.0001):
         """Perform fraction of spherical linear interpolation from this quaternion to other quaternion
 
@@ -155,7 +155,7 @@ class Quaternion(object):
             target = other.internal[::]
         if (1.0- cosValue) > minimalStep:
             # regular spherical linear interpolation
-            angle = acos( cosValue )
+            angle = arccos( cosValue )
             angleSin = sin( angle )
             sourceScale = sin( (1.0- fraction) * angle ) / angleSin
             targetScale = sin( fraction * angle ) / angleSin

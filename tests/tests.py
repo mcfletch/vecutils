@@ -7,8 +7,15 @@ class TriangleUtilityTests(TestCase):
             [0,0,0],[1,0,0],[0,1,0],
             [1,0,0],[0,0,0],[0,1,0],
         ],'f')
-    def test_normal_per_face(self):
+    def test_normal_per_face_ccw(self):
         normals = triangleutilities.normalPerFace( self.triangles )
+        assert arrays.allclose(normals, [[0, 0, 1], [0, 0, -1]]), normals
+    def test_normal_per_face_noccw(self):
+        normals = triangleutilities.normalPerFace( self.triangles, ccw=False )
+        assert arrays.allclose(normals, [[0, 0, -1], [0, 0, 1]]), normals
+    def test_basis_vector_reshape(self):
+        triangles = arrays.reshape(self.triangles, (2, 3, 3))
+        normals = triangleutilities.normalPerFace( triangles )
         assert arrays.allclose(normals, [[0, 0, 1], [0, 0, -1]]), normals
     def test_centers(self):
         centers = triangleutilities.centers(self.triangles)
@@ -16,6 +23,7 @@ class TriangleUtilityTests(TestCase):
             [1/3., 1/3., 0], 
             [1/3., 1/3., 0], 
         ]), centers
+        
 class VectorUtilityTests(TestCase):
     def test_colinear(self):
         for points in [
