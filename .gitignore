@@ -1,0 +1,5 @@
+.eric?project
+*.e?p
+*.egg-info
+__pycache__
+.coverage
