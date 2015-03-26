@@ -74,7 +74,7 @@ class Quaternion(object):
             z = w1*z2 + z1*w2 + x1*y2 - y1*x2
             return self.__class__( array([w,x,y,z],'d'))
         else:
-            return dot( self.matrix (), other )
+            return dot( other, self.matrix() )
     def XYZR( self ):
         """Get a VRML-style axis plus rotation form of the rotation.
         Note that this is in radians, not degrees, and that the angle
