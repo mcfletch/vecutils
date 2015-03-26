@@ -21,7 +21,7 @@ Installation
 
 VecUtils is a python library, use:
 
-..code:: bash
+.. code-block:: bash
 
     pip install git+http://github.com/mcfletch/vecutils#egg=vecutils 
     
