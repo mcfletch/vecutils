@@ -20,17 +20,12 @@ class TestQuaternions( unittest.TestCase ):
         assert arrays.allclose(rot[-1]%(arrays.pi*2), 0)
         matrix = q.matrix()
         ac(matrix, arrays.identity(4))
-    
-#    print(fromEuler( y = pi/2, z = pi/2 ).matrix())
-#    rot = fromEuler( y = pi/2, z = pi/2 ).XYZR()
-#    
-#            print('fromEuler')
-#    print(apply( fromXYZR, rot).matrix())
-#    print(fromEuler( y = pi/2, z = pi/2 ))
-#    first = fromXYZR( 0,1,0,0 )
-#    second = fromXYZR( 0,1,0,pi )
-#    for fraction in arange( 0.0, 1.0, .01 ):
-#        print(first.slerp( second, fraction ))
+    def test_slerp(self):
+        first = quaternion.fromXYZR( 0,1,0,0 )
+        second = quaternion.fromXYZR( 0,1,0,arrays.pi )
+        for fraction in arrays.arange( 0.01, 1.0, .01 ):
+            rot = first.slerp( second, fraction ).XYZR()
+            assert arrays.allclose( rot, (0, 1, 0, arrays.pi*fraction ), 0.001)
 #    first = fromXYZR( 0,1,0,0 )
 #    second = first.inverse()
 #    assert allclose( first.internal,second.internal ), (first, second)
