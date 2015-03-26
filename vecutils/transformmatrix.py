@@ -34,7 +34,7 @@ DEGTORAD = TWOPI/360.
 ORIGINPOINT = array([0,0,0,1],'f')
 VERY_SMALL = 1e-300
 
-def transformMatrix(
+def transform_matrix(
         translation = (0,0,0),
         center = (0,0,0),
         rotation = (0,1,0,0),
@@ -56,14 +56,14 @@ def transformMatrix(
     transformation matrix, a 4x4 matrix of such as
     returned by this function.
     """
-    T,T1 = transMatrix( translation )
-    C,C1 = transMatrix( center )
-    R,R1 = rotMatrix( rotation )
-    SO,SO1 = rotMatrix( scaleOrientation )
-    S,S1 = scaleMatrix( scale )
-    return compressMatrices( parentMatrix, T,C,R,SO,S,SO1,C1 )
+    T,T1 = translate_matrix( translation )
+    C,C1 = translate_matrix( center )
+    R,R1 = rotation_matrix( rotation )
+    SO,SO1 = rotation_matrix( scaleOrientation )
+    S,S1 = scale_matrix( scale )
+    return compress_matrices( parentMatrix, T,C,R,SO,S,SO1,C1 )
     
-def itransformMatrix(
+def itransform_matrix(
         translation = (0,0,0),
         center = (0,0,0),
         rotation = (0,1,0,0),
@@ -90,14 +90,14 @@ def itransformMatrix(
     transformation matrix, a 4x4 matrix of such as
     returned by this function.
     """
-    T,T1 = transMatrix( translation )
-    C,C1 = transMatrix( center )
-    R,R1 = rotMatrix( rotation )
-    SO,SO1 = rotMatrix( scaleOrientation )
-    S,S1 = scaleMatrix( scale )
-    return compressMatrices( parentMatrix, C,SO, S1, SO1, R1, C1, T1)
+    T,T1 = translate_matrix( translation )
+    C,C1 = translate_matrix( center )
+    R,R1 = rotation_matrix( rotation )
+    SO,SO1 = rotation_matrix( scaleOrientation )
+    S,S1 = scale_matrix( scale )
+    return compress_matrices( parentMatrix, C,SO, S1, SO1, R1, C1, T1)
 
-def transformMatrices( 
+def transform_matrices( 
         translation = (0,0,0),
         center = (0,0,0),
         rotation = (0,1,0,0),
@@ -106,17 +106,17 @@ def transformMatrices(
         parentMatrix = None,
     ):
     """Calculate both forward and backward matrices for these parameters"""
-    T,T1 = transMatrix( translation )
-    C,C1 = transMatrix( center )
-    R,R1 = rotMatrix( rotation )
-    SO,SO1 = rotMatrix( scaleOrientation )
-    S,S1 = scaleMatrix( scale )
+    T,T1 = translate_matrix( translation )
+    C,C1 = translate_matrix( center )
+    R,R1 = rotation_matrix( rotation )
+    SO,SO1 = rotation_matrix( scaleOrientation )
+    S,S1 = scale_matrix( scale )
     return (
-        compressMatrices( parentMatrix, T,C,R,SO,S,SO1,C1 ),
-        compressMatrices( parentMatrix, C,SO, S1, SO1, R1, C1, T1)
+        compress_matrices( parentMatrix, T,C,R,SO,S,SO1,C1 ),
+        compress_matrices( parentMatrix, C,SO, S1, SO1, R1, C1, T1)
     )
 
-def localMatrices(
+def local_matrices(
         translation = (0,0,0),
         center = (0,0,0),
         rotation = (0,1,0,0),
@@ -125,17 +125,17 @@ def localMatrices(
         parentMatrix = None,
     ):
     """Calculate (forward,inverse) matrices for this transform element"""
-    T,T1 = transMatrix( translation )
-    C,C1 = transMatrix( center )
-    R,R1 = rotMatrix( rotation )
-    SO,SO1 = rotMatrix( scaleOrientation )
-    S,S1 = scaleMatrix( scale )
+    T,T1 = translate_matrix( translation )
+    C,C1 = translate_matrix( center )
+    R,R1 = rotation_matrix( rotation )
+    SO,SO1 = rotation_matrix( scaleOrientation )
+    S,S1 = scale_matrix( scale )
     return (
-        compressMatrices( T,C,R,SO,S,SO1,C1 ),
-        compressMatrices( C,SO, S1, SO1, R1, C1, T1)
+        compress_matrices( T,C,R,SO,S,SO1,C1 ),
+        compress_matrices( C,SO, S1, SO1, R1, C1, T1)
     )
 
-def compressMatrices( *matrices ):
+def compress_matrices( *matrices ):
     """Compress a set of matrices
     
     Any (or all) of the matrices may be None,
@@ -169,15 +169,15 @@ def center(
     """
     if parentMatrix is None:
         parentMatrix = identity(4)
-    T,T1 = transMatrix( translation )
-    C,C1 = transMatrix( center )
+    T,T1 = translate_matrix( translation )
+    C,C1 = translate_matrix( center )
     for x in (T,C):
         if x:
             parentMatrix = dot( x, parentMatrix)
     return dot( ORIGINPOINT, parentMatrix )
 
 if tmatrixaccel:
-    def rotMatrix( source = None ):
+    def rotation_matrix( source = None ):
         """Convert a VRML rotation to rotation matrices
 
         Returns (R, R') (R and the inverse of R), with both
@@ -193,9 +193,9 @@ if tmatrixaccel:
         else:
             (x,y,z, a) = source
         if a % TWOPI:
-            return tmatrixaccel.rotMatrix( x,y,z,a ),tmatrixaccel.rotMatrix( x,y,z,-a )
+            return tmatrixaccel.rotation_matrix( x,y,z,a ),tmatrixaccel.rotation_matrix( x,y,z,-a )
         return None,None
-    def scaleMatrix( source=None ):
+    def scale_matrix( source=None ):
         """Convert a VRML scale to scale matrices
 
         Returns (S, S') (S and the inverse of S), with both
@@ -211,10 +211,10 @@ if tmatrixaccel:
             (x,y,z) = source[:3]
         if x == y == z == 1.0:
             return None, None
-        forward = tmatrixaccel.scaleMatrix( x,y,z )
-        backward = tmatrixaccel.scaleMatrix( 1.0/(x or VERY_SMALL),1.0/(y or VERY_SMALL), 1.0/(z or VERY_SMALL) )
+        forward = tmatrixaccel.scale_matrix( x,y,z )
+        backward = tmatrixaccel.scale_matrix( 1.0/(x or VERY_SMALL),1.0/(y or VERY_SMALL), 1.0/(z or VERY_SMALL) )
         return forward, backward
-    def transMatrix( source=None ):
+    def translate_matrix( source=None ):
         """Convert a VRML translation to translation matrices
 
         Returns (T, T') (T and the inverse of T), with both
@@ -230,11 +230,11 @@ if tmatrixaccel:
             (x,y,z) = source[:3]
         if x == y == z == 0.0:
             return None, None 
-        return tmatrixaccel.transMatrix( x,y,z ),tmatrixaccel.transMatrix( -x, -y, -z )
-    perspectiveMatrix = tmatrixaccel.perspectiveMatrix
-    orthoMatrix = tmatrixaccel.orthoMatrix
+        return tmatrixaccel.translate_matrix( x,y,z ),tmatrixaccel.translate_matrix( -x, -y, -z )
+    perspective_matrix = tmatrixaccel.perspective_matrix
+    ortho_matrix = tmatrixaccel.ortho_matrix
 else:
-    def rotMatrix( source=None ):
+    def rotation_matrix( source=None ):
         """Convert a VRML rotation to rotation matrices
 
         Returns (R, R') (R and the inverse of R), with both
@@ -278,7 +278,7 @@ else:
         else:
             return None, None
 
-    def scaleMatrix( source=None ):
+    def scale_matrix( source=None ):
         """Convert a VRML scale to scale matrices
 
         Returns (S, S') (S and the inverse of S), with both
@@ -303,7 +303,7 @@ else:
         )
         return S, S1
 
-    def transMatrix( source=None ):
+    def translate_matrix( source=None ):
         """Convert a VRML translation to translation matrices
 
         Returns (T, T') (T and the inverse of T), with both
@@ -323,7 +323,7 @@ else:
         T1 = array( [ [1,0,0,0], [0,1,0,0], [0,0,1,0], [-x,-y,-z,1] ], 'f' )
         return T, T1
 
-    def perspectiveMatrix( fovy, aspect, zNear, zFar, inverse=False ):
+    def perspective_matrix( fovy, aspect, zNear, zFar, inverse=False ):
         """Create a perspective matrix from given parameters
         
         Note that this is the same matrix as for gluPerspective,
@@ -345,7 +345,7 @@ else:
                 [0,0,(zFar+zNear)/zDelta,-1],
                 [0,0,(2*zFar*zNear)/zDelta,0]
             ],'f')
-    def orthoMatrix( left=-1.0, right=1.0, bottom=-1.0, top=1.0, zNear=-1.0, zFar=1.0 ):
+    def ortho_matrix( left=-1.0, right=1.0, bottom=-1.0, top=1.0, zNear=-1.0, zFar=1.0 ):
         """Calculate an orthographic projection matrix
         
         Similar to glOrtho 

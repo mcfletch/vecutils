@@ -1,5 +1,5 @@
 import unittest,sys
-from vecutils.transformmatrix import transMatrix, rotMatrix, scaleMatrix, perspectiveMatrix, DEGTORAD
+from vecutils.transformmatrix import translate_matrix, rotation_matrix, scale_matrix, perspective_matrix, DEGTORAD
 from vecutils.arrays import allclose,dot, pi, array
 
 class TestTransformMatrix( unittest.TestCase ):
@@ -12,32 +12,32 @@ class TestTransformMatrix( unittest.TestCase ):
             else:
                 assert allclose( result, expected, 0, 0.000001 ),(name,matrix,point,expected,result)
     TEST_DATA = [
-        (transMatrix( (1,0,0) )[0], (0, 0,0,1), (1,0,0,1), "Simple translation"),
-        (transMatrix( (-1,-1,-1) )[0], (1, 1,1,1), (0,0,0,1), "Simple translation"),
-        (transMatrix( (0,0,1) )[0], (0, 0,0,1), (0,0,1,1), "Simple translation"),
-        (rotMatrix( (0,1,0,pi) )[0], (1, 0,0,1), (-1,0,0,1), "Simple rotation"),
-        (rotMatrix( (0,1,0,pi/2) )[0], (1, 0,0,1), (0,0,-1,1), "Simple rotation"),
-        (rotMatrix( (0,0,1,pi/2) )[0], (1, 0,0,1), (0,1,0,1), "Simple rotation"),
-        (rotMatrix( (0,0,1,-(pi/2)) )[0], (1, 0,0,1), (0,-1,0,1), "Simple rotation"),
-        (rotMatrix( (0,0,-1,-(pi/2)) )[0], (1, 0,0,1), (0,1,0,1), "Simple rotation"),
-        (rotMatrix( (0,0,-2,-(pi/2)) )[0], (1, 0,0,1), (0,1,0,1), "Simple rotation (w/normalize)"),
-        (rotMatrix( (1,0,0,-(pi/2)) )[0], (1, 0,0,1), (1,0,0,1), "Simple rotation"),
-        (rotMatrix( (0,0,1,pi/2) )[0], (0,1,0,1), (-1,0,0,1), "Simple rotation"),
-        (rotMatrix( (1,0,0,pi/2) )[0], (0,0,1,1), (0,-1,0,1), "Simple rotation"),
-        (scaleMatrix( (1,1,2) )[0], (1, 1,1,1), (1,1,2,1), "Simple scale"),
-        (scaleMatrix( (-1,1,2) )[0], (1, 1,1,1), (-1,1,2,1), "Simple scale"),
-        (scaleMatrix( (-1,0,2) )[0], (1, 1,1,1), (-1,0,2,1), "Simple scale"),
-        (scaleMatrix( (-1,0,0) )[0], (1, 1,1,1), (-1,0,0,1), "Simple scale"),
-        (scaleMatrix( (0,0,0) )[0], (1, 1,1,1), (0,0,0,1), "Simple scale"),
-        (rotMatrix([ 0.,0.,1., -0.515])[0], (1,0,0,1), (0.87029272,-0.49253485,0.,1.), "Make sure rotation uses float check for abs value" ),
+        (translate_matrix( (1,0,0) )[0], (0, 0,0,1), (1,0,0,1), "Simple translation"),
+        (translate_matrix( (-1,-1,-1) )[0], (1, 1,1,1), (0,0,0,1), "Simple translation"),
+        (translate_matrix( (0,0,1) )[0], (0, 0,0,1), (0,0,1,1), "Simple translation"),
+        (rotation_matrix( (0,1,0,pi) )[0], (1, 0,0,1), (-1,0,0,1), "Simple rotation"),
+        (rotation_matrix( (0,1,0,pi/2) )[0], (1, 0,0,1), (0,0,-1,1), "Simple rotation"),
+        (rotation_matrix( (0,0,1,pi/2) )[0], (1, 0,0,1), (0,1,0,1), "Simple rotation"),
+        (rotation_matrix( (0,0,1,-(pi/2)) )[0], (1, 0,0,1), (0,-1,0,1), "Simple rotation"),
+        (rotation_matrix( (0,0,-1,-(pi/2)) )[0], (1, 0,0,1), (0,1,0,1), "Simple rotation"),
+        (rotation_matrix( (0,0,-2,-(pi/2)) )[0], (1, 0,0,1), (0,1,0,1), "Simple rotation (w/normalize)"),
+        (rotation_matrix( (1,0,0,-(pi/2)) )[0], (1, 0,0,1), (1,0,0,1), "Simple rotation"),
+        (rotation_matrix( (0,0,1,pi/2) )[0], (0,1,0,1), (-1,0,0,1), "Simple rotation"),
+        (rotation_matrix( (1,0,0,pi/2) )[0], (0,0,1,1), (0,-1,0,1), "Simple rotation"),
+        (scale_matrix( (1,1,2) )[0], (1, 1,1,1), (1,1,2,1), "Simple scale"),
+        (scale_matrix( (-1,1,2) )[0], (1, 1,1,1), (-1,1,2,1), "Simple scale"),
+        (scale_matrix( (-1,0,2) )[0], (1, 1,1,1), (-1,0,2,1), "Simple scale"),
+        (scale_matrix( (-1,0,0) )[0], (1, 1,1,1), (-1,0,0,1), "Simple scale"),
+        (scale_matrix( (0,0,0) )[0], (1, 1,1,1), (0,0,0,1), "Simple scale"),
+        (rotation_matrix([ 0.,0.,1., -0.515])[0], (1,0,0,1), (0.87029272,-0.49253485,0.,1.), "Make sure rotation uses float check for abs value" ),
     ]
         
-    def test_perspectiveMatrix( self ):
+    def test_perspective_matrix( self ):
         """Test that perspective matrix calculation matches expected values"""
-        result = perspectiveMatrix(
+        result = perspective_matrix(
             59.999999999999993*DEGTORAD, 1.0, 0.29999999999999999, 50000
         )
-        inverse = perspectiveMatrix(
+        inverse = perspective_matrix(
             59.999999999999993*DEGTORAD, 1.0, 0.29999999999999999, 50000, inverse=True,
         )
         
